@@ -1,0 +1,21 @@
+name: Test GLPI Connection
+ 
+on:
+  workflow_dispatch:
+ 
+jobs:
+  test:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Get GLPI Token
+        run: |
+          RESPONSE=$(curl -s \
+            -u "${{ secrets.GLPI_CLIENT_ID }}:${{ secrets.GLPI_CLIENT_SECRET }}" \
+            -X POST "${{ secrets.GLPI_URL }}/api.php/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=password" \
+            -d "username=${{ secrets.GLPI_USERNAME }}" \
+            -d "password=${{ secrets.GLPI_PASSWORD }}")
+ 
+          echo "$RESPONSE"
