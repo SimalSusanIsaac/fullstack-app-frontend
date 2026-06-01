@@ -8,22 +8,20 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
-      - name: Get Token and Read Changes
+      - name: Read Changes
         run: |
-         RESPONSE=$(curl -s \
-           -u "${{ secrets.GLPI_CLIENT_ID }}:${{ secrets.GLPI_CLIENT_SECRET }}" \
-           -X POST "${{ secrets.GLPI_URL }}/api.php/token" \
-           -H "Content-Type: application/x-www-form-urlencoded" \
-           -d "grant_type=password" \
-           -d "username=${{ secrets.GLPI_USERNAME }}" \
-           -d "password=${{ secrets.GLPI_PASSWORD }}")
-     
-         TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
-     
-         echo "TOKEN RECEIVED"
-     
-         echo "===== CHANGES ====="
-     
-         curl -s \
-           -H "Authorization: Bearer $TOKEN" \
-           "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Changes"
+          RESPONSE=$(curl -s \
+            -u "${{ secrets.GLPI_CLIENT_ID }}:${{ secrets.GLPI_CLIENT_SECRET }}" \
+            -X POST "${{ secrets.GLPI_URL }}/api.php/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=password" \
+            -d "username=${{ secrets.GLPI_USERNAME }}" \
+            -d "password=${{ secrets.GLPI_PASSWORD }}")
+      
+          TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
+      
+          echo "Token obtained"
+      
+          curl -v \
+            -H "Authorization: Bearer $TOKEN" \
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Changes"
