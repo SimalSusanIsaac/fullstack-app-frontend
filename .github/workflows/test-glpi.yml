@@ -21,4 +21,4 @@ jobs:
  
           curl \
             -H "Authorization: Bearer $TOKEN" \
-            "${{ secrets.GLPI_URL }}/api.php/v2.2/Change"
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Changes"
