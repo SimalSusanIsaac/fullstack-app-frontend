@@ -17,8 +17,12 @@ jobs:
             -d "grant_type=password" \
             -d "username=${{ secrets.GLPI_USERNAME }}" \
             -d "password=${{ secrets.GLPI_PASSWORD }}" \
+            -d "scope=api" \
             | jq -r '.access_token')
- 
+      
+          echo "Token length: ${#TOKEN}"
+      
           curl -s \
+            -w "\nHTTP_CODE=%{http_code}\n" \
             -H "Authorization: Bearer $TOKEN" \
-            "${{ secrets.GLPI_URL }}/api.php/v2.2/"
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change"
