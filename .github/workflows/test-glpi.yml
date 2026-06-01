@@ -1,4 +1,4 @@
-name: Test GLPI Connection
+name: Test GLPI API
  
 on:
   workflow_dispatch:
@@ -8,14 +8,17 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
-      - name: Get GLPI Token
+      - name: Get Token and Read Changes
         run: |
-          RESPONSE=$(curl -s \
+          TOKEN=$(curl -s \
             -u "${{ secrets.GLPI_CLIENT_ID }}:${{ secrets.GLPI_CLIENT_SECRET }}" \
             -X POST "${{ secrets.GLPI_URL }}/api.php/token" \
             -H "Content-Type: application/x-www-form-urlencoded" \
             -d "grant_type=password" \
             -d "username=${{ secrets.GLPI_USERNAME }}" \
-            -d "password=${{ secrets.GLPI_PASSWORD }}")
+            -d "password=${{ secrets.GLPI_PASSWORD }}" \
+            | jq -r '.access_token')
  
-          echo "$RESPONSE"
+          curl \
+            -H "Authorization: Bearer $TOKEN" \
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/Change"
