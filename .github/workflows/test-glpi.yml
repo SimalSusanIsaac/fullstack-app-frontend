@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
-      - name: Read Changes
+      - name: Test Token
         run: |
           TOKEN=$(curl -s \
             -u "${{ secrets.GLPI_CLIENT_ID }}:${{ secrets.GLPI_CLIENT_SECRET }}" \
@@ -19,7 +19,9 @@ jobs:
             -d "password=${{ secrets.GLPI_PASSWORD }}" \
             | jq -r '.access_token')
       
+          echo "Token Length: ${#TOKEN}"
+      
           curl -s \
             -w "\nHTTP_CODE=%{http_code}\n" \
             -H "Authorization: Bearer $TOKEN" \
-            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change"
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/user"
