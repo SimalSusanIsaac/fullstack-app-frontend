@@ -67,3 +67,9 @@ jobs:
           curl -s \
             -H "Authorization: Bearer $TOKEN" \
             "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/25"
+      - name: Check Approval APIs
+        run: |
+      
+          curl -s \
+            -H "Authorization: Bearer $TOKEN" \
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/ChangeValidation"
