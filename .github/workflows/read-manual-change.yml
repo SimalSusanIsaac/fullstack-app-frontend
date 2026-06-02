@@ -1,6 +1,6 @@
-- name: Read Manual Change
+- name: Read Change Details
   run: |
 
     curl -s \
       -H "Authorization: Bearer $TOKEN" \
-      "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/19"
+      "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/20"
