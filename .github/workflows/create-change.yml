@@ -29,6 +29,7 @@ jobs:
 
       - name: Create Change Request
         run: |
+      
           RESPONSE=$(curl -s \
             -X POST \
             "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change" \
@@ -39,7 +40,8 @@ jobs:
               "content":"Deployment initiated from GitHub Actions",
               "impact":2,
               "urgency":2,
-              "priority":3
+              "priority":3,
+              "itilcategories_id":21
             }')
-
+      
           echo "$RESPONSE"
