@@ -1,59 +1,19 @@
 name: Create GLPI Change
 
 on:
-push:
-branches:
-- main
+  push:
+    branches:
+      - main
 
 jobs:
+  create-change:
+    runs-on: ubuntu-latest
 
-create-change:
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-```
-runs-on: ubuntu-latest
-
-outputs:
-  change_id: ${{ steps.create_change.outputs.change_id }}
-
-steps:
-
-- name: Checkout
-  uses: actions/checkout@v4
-
-- name: Get OAuth Token
-  id: auth
-  run: |
-
-    TOKEN=$(curl -s \
-      -u "${{ secrets.GLPI_CLIENT_ID }}:${{ secrets.GLPI_CLIENT_SECRET }}" \
-      -X POST "${{ secrets.GLPI_URL }}/api.php/token" \
-      -H "Content-Type: application/x-www-form-urlencoded" \
-      -d "grant_type=password" \
-      -d "username=${{ secrets.GLPI_USERNAME }}" \
-      -d "password=${{ secrets.GLPI_PASSWORD }}" \
-      -d "scope=api" \
-      | jq -r '.access_token')
-
-    echo "TOKEN=$TOKEN" >> $GITHUB_ENV
-
-- name: Create Change
-  id: create_change
-  run: |
-
-    RESPONSE=$(curl -s \
-      -X POST \
-      "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change" \
-      -H "Authorization: Bearer $TOKEN" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "name":"Frontend Backend Deployment",
-        "content":"Repository: '${{ github.repository }}' Commit: '${{ github.sha }}' Triggered By: '${{ github.actor }}'",
-        "category":{"id":21}
-      }')
-
-    echo "$RESPONSE"
-
-    CHANGE_ID=$(echo "$RESPONSE" | jq -r '.id')
-
-    echo "change_id=$CHANGE_ID" >> $GITHUB_OUTPUT
-```
+      - name: Test
+        run: |
+          echo "Workflow started"
+          echo "Commit = ${{ github.sha }}"
