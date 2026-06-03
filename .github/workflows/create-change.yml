@@ -1,5 +1,16 @@
-- name: Read Change 36
-  run: |
-    curl -s \
-      -H "Authorization: Bearer $TOKEN" \
-      "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/36" | jq .
+name: Create GLPI Change
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-change:
+    runs-on: ubuntu-latest
+
+    steps:
+  
+    - name: Read Change 36
+      run: |
+        curl -s \
+          -H "Authorization: Bearer $TOKEN" \
+          "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/36" | jq .
