@@ -53,30 +53,10 @@ jobs:
           echo "CHANGE_ID=$CHANGE_ID" >> $GITHUB_ENV
 
           echo "Created Change ID = $CHANGE_ID"
-          
+
       - name: Read Change Details
         run: |
 
           curl -s \
             -H "Authorization: Bearer $TOKEN" \
             "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/$CHANGE_ID"
-
-      - name: Read Approved Change
-        run: |
-      
-          curl -s \
-            -H "Authorization: Bearer $TOKEN" \
-            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/25"
-      - name: Check Approval APIs
-        run: |
-      
-          curl -s \
-            -H "Authorization: Bearer $TOKEN" \
-            "${{ secrets.GLPI_URL }}/api.php/v2.2/ChangeValidation"
-
-      - name: Search Approval Objects
-        run: |
-      
-          curl -s \
-            -H "Authorization: Bearer $TOKEN" \
-            "${{ secrets.GLPI_URL }}/api.php/v2.2/search"
