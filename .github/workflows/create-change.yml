@@ -45,3 +45,10 @@ jobs:
           curl -v --connect-timeout 30 \
             -H "Authorization: Bearer $TOKEN" \
             "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change"
+
+      - name: Dump Full Change JSON
+        run: |
+      
+          curl -s \
+            -H "Authorization: Bearer $TOKEN" \
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/26" | jq .
