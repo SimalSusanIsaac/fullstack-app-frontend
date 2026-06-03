@@ -1,16 +1,30 @@
-name: Create GLPI Change
+name: Read Change 36
 
 on:
   workflow_dispatch:
 
 jobs:
-  create-change:
+  read-change:
     runs-on: ubuntu-latest
 
     steps:
-  
-    - name: Read Change 36
-      run: |
-        curl -s \
-          -H "Authorization: Bearer $TOKEN" \
-          "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/36" | jq .
+
+      - name: Authenticate to GLPI
+        run: |
+          TOKEN=$(curl -s \
+            -u "${{ secrets.GLPI_CLIENT_ID }}:${{ secrets.GLPI_CLIENT_SECRET }}" \
+            -X POST "${{ secrets.GLPI_URL }}/api.php/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=password" \
+            -d "username=${{ secrets.GLPI_USERNAME }}" \
+            -d "password=${{ secrets.GLPI_PASSWORD }}" \
+            -d "scope=api" \
+            | jq -r '.access_token')
+
+          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+
+      - name: Read Change 36
+        run: |
+          curl -s \
+            -H "Authorization: Bearer $TOKEN" \
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/36" | jq .
