@@ -1,0 +1,75 @@
+name: Create GLPI Change
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-change:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GLPI
+        run: |
+          TOKEN=$(curl -s \
+            -u "${{ secrets.GLPI_CLIENT_ID }}:${{ secrets.GLPI_CLIENT_SECRET }}" \
+            -X POST "${{ secrets.GLPI_URL }}/api.php/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=password" \
+            -d "username=${{ secrets.GLPI_USERNAME }}" \
+            -d "password=${{ secrets.GLPI_PASSWORD }}" \
+            -d "scope=api" \
+            | jq -r '.access_token')
+
+          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+
+      - name: Create Change Request
+        run: |
+
+          RESPONSE=$(curl -s \
+            -X POST \
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name":"Production Deployment",
+              "content":"Deployment initiated from GitHub Actions",
+              "impact":2,
+              "urgency":2,
+              "priority":3,
+              "category":{
+                "id":21
+              }
+            }')
+
+          echo "$RESPONSE"
+
+          CHANGE_ID=$(echo "$RESPONSE" | jq -r '.id')
+
+          echo "CHANGE_ID=$CHANGE_ID" >> $GITHUB_ENV
+
+          echo "Created Change ID = $CHANGE_ID"
+          
+      - name: Read Change Details
+        run: |
+
+          curl -s \
+            -H "Authorization: Bearer $TOKEN" \
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/$CHANGE_ID"
+
+      - name: Read Approved Change
+        run: |
+      
+          curl -s \
+            -H "Authorization: Bearer $TOKEN" \
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/Assistance/Change/25"
+      - name: Check Approval APIs
+        run: |
+      
+          curl -s \
+            -H "Authorization: Bearer $TOKEN" \
+            "${{ secrets.GLPI_URL }}/api.php/v2.2/ChangeValidation"
